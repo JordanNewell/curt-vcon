@@ -1,6 +1,6 @@
 {
   "name": "curt-vcon",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bidirectional converter between the .curt AI-conversation format and the IETF vCon container",
   "license": "MIT",
   "type": "module",
