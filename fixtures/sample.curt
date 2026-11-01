@@ -1,0 +1,46 @@
+{
+	"curt": "curtis-conversation",
+	"version": 1,
+	"generator": "fixture",
+	"conversation": {
+		"id": "conv_abc123",
+		"title": "Refactor the parser",
+		"createdAt": 1761907200000,
+		"updatedAt": 1761907500000,
+		"provider": "ExampleAI",
+		"model": "example-large",
+		"messages": [
+			{
+				"id": "m1",
+				"role": "user",
+				"content": "Can you write a JSON parser?",
+				"timestamp": 1761907200000
+			},
+			{
+				"id": "m2",
+				"role": "assistant",
+				"content": "Sure. Here is a minimal recursive-descent JSON parser.",
+				"timestamp": 1761907205000,
+				"model": "example-large"
+			},
+			{
+				"id": "m3",
+				"role": "system",
+				"content": "You are a helpful coding assistant.",
+				"timestamp": 1761907199000
+			},
+			{
+				"id": "m4",
+				"role": "tool",
+				"content": "{\"result\": \"tests passed\"}",
+				"timestamp": 1761907300000
+			},
+			{
+				"id": "m5",
+				"role": "user",
+				"content": "Great — now add tests.",
+				"timestamp": 1761907400000
+			}
+		]
+	}
+}

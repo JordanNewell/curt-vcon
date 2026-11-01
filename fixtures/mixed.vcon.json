@@ -1,0 +1,62 @@
+{
+  "vcon": "0.5.0",
+  "uuid": "018f1a2b-3c4d-7e5f-8a9b-0c1d2e3f4a5b",
+  "created_at": "2026-10-31T10:00:00.000Z",
+  "updated_at": "2026-10-31T10:05:00.000Z",
+  "subject": "Support call with transcript",
+  "parties": [
+    { "name": "Alice", "tel": "+15551234567" },
+    { "name": "user" },
+    { "name": "assistant" }
+  ],
+  "dialog": [
+    {
+      "type": "text",
+      "start": "2026-10-31T10:00:05.000Z",
+      "parties": [0],
+      "mediatype": "text/plain",
+      "body": "Hello, I need help with my order.",
+      "encoding": "none"
+    },
+    {
+      "type": "recording",
+      "start": "2026-10-31T10:00:00.000Z",
+      "duration": 300.5,
+      "parties": [0],
+      "mediatype": "audio/x-wav",
+      "filename": "call.wav",
+      "url": "https://example.com/media/call.wav",
+      "content_hash": "sha-512:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
+    },
+    {
+      "type": "incomplete",
+      "start": "2026-10-31T10:02:00.000Z",
+      "disposition": "no-answer"
+    },
+    {
+      "type": "text",
+      "start": "2026-10-31T10:03:12.500Z",
+      "parties": [2],
+      "mediatype": "text/plain",
+      "body": "Sure, could you give me the order number?",
+      "encoding": "none",
+      "message_id": "assistant-msg-7"
+    },
+    {
+      "type": "text",
+      "start": "2026-10-31T10:04:00.000Z",
+      "parties": [1],
+      "mediatype": "application/json",
+      "body": { "order": 42, "status": "shipped" },
+      "encoding": "json"
+    }
+  ],
+  "attachments": [
+    {
+      "purpose": "transcript",
+      "mediatype": "text/plain",
+      "body": "unused for conversion",
+      "encoding": "none"
+    }
+  ]
+}
