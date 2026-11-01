@@ -4,6 +4,9 @@
   "description": "Bidirectional converter between the .curt AI-conversation format and the IETF vCon container",
   "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -16,7 +19,8 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "npm run build && vitest run"
+    "test": "npm run build && vitest run",
+    "prepack": "npm run build"
   },
   "keywords": [
     "curt",
