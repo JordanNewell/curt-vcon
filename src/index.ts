@@ -30,9 +30,16 @@ export type VconEncoding = "base64url" | "json" | "none";
 /** draft-ietf-vcon-vcon-core-05, section 4.5.1. */
 export type VconDialogType = "recording" | "text" | "incomplete";
 
-/** draft-ietf-vcon-vcon-core-05, section 4.4. Only `name` is modeled. */
+/**
+ * draft-ietf-vcon-vcon-core-05, section 4.4.11. The value SHOULD be one of
+ * these; anything else is a SHOULD violation, not a MUST.
+ */
+export type VconPartyType = "person" | "bot" | "organization";
+
+/** draft-ietf-vcon-vcon-core-05, section 4.4. Only `name` and `type` are modeled. */
 export interface VconParty {
   name?: string;
+  type?: VconPartyType;
   [key: string]: unknown;
 }
 
@@ -124,6 +131,15 @@ function asCurtRole(v: unknown): CurtRole {
 }
 
 /**
+ * Party `type` per draft-ietf-vcon-vcon-core-05 section 4.4.11: the .curt
+ * "user" role is a human turn; assistant/system/tool turns originate from
+ * the AI system or its tools, which the draft types as "bot".
+ */
+function partyTypeForRole(role: CurtRole): VconPartyType {
+  return role === "user" ? "person" : "bot";
+}
+
+/**
  * Convert a parsed .curt conversation to a vCon object.
  *
  * Mapping (all field names verified against draft-ietf-vcon-vcon-core-05):
@@ -131,8 +147,10 @@ function asCurtRole(v: unknown): CurtRole {
  * - `conversation.createdAt` -> `created_at` (RFC 3339; epoch 0 fallback)
  * - `conversation.updatedAt` -> `updated_at`
  * - `conversation.title` -> `subject`
- * - one Party per distinct message role, `name` = the role string, ordered by
- *   first appearance
+ * - one Party per distinct message role, ordered by first appearance:
+ *   `name` = the role string (carries the role through the round trip;
+ *   `name` is free-form per draft section 4.4.5) and `type` = "person" for
+ *   the user role, "bot" for assistant/system/tool (draft section 4.4.11)
  * - each message -> one `dialog` entry of type "text":
  *   `start` = message timestamp (RFC 3339), `parties` = [party index of the
  *   role], `mediatype` = "text/plain", `body` = content, `encoding` = "none",
@@ -154,7 +172,10 @@ export function curtToVcon(curt: CurtConversation): Vcon {
   }
   // Keep every role representable even with zero messages is unnecessary;
   // an empty parties array is fine for an empty conversation.
-  const parties: VconParty[] = roleOrder.map((role) => ({ name: role }));
+  const parties: VconParty[] = roleOrder.map((role) => ({
+    name: role,
+    type: partyTypeForRole(role),
+  }));
 
   const dialog: VconDialog[] = messages.map((m) => ({
     type: "text" as const,
@@ -216,8 +237,9 @@ function decodeDialogBody(d: VconDialog): string | undefined {
  * `incomplete`, externally referenced (`url`) dialogs, and dialogs with
  * unrecognized encodings are skipped. Party `name` is mapped back to a
  * .curt role when it is one of user/assistant/system/tool, otherwise
- * "user". Timestamps come from `dialog[].start`, falling back to the vCon
- * `created_at`, then epoch 0.
+ * "user" (party `type` is informational here, not used for role recovery —
+ * it cannot distinguish system from tool turns). Timestamps come from
+ * `dialog[].start`, falling back to the vCon `created_at`, then epoch 0.
  *
  * Returns null when the input is not vCon-shaped (no object, or no string
  * `uuid`). Note this is a structural check, not full draft validation.
@@ -283,7 +305,7 @@ export function curtFileToVcon(raw: string): Vcon | null {
   return curt === null ? null : curtToVcon(curt);
 }
 
-const GENERATOR = `curt-vcon@0.1.0`;
+const GENERATOR = `curt-vcon@1.0.0`;
 
 /**
  * Convert a vCon object to a .curt file body (serialized envelope).

@@ -33,9 +33,14 @@ describe("curtToVcon", () => {
     expect(a).toBe(b);
   });
 
-  it("creates one party per distinct role, ordered by first appearance", () => {
+  it("creates one party per distinct role, ordered by first appearance, typed per draft 4.4.11", () => {
     const v = curtToVcon(curt);
-    expect(v.parties).toEqual([{ name: "user" }, { name: "assistant" }, { name: "system" }, { name: "tool" }]);
+    expect(v.parties).toEqual([
+      { name: "user", type: "person" },
+      { name: "assistant", type: "bot" },
+      { name: "system", type: "bot" },
+      { name: "tool", type: "bot" },
+    ]);
   });
 
   it("maps each message to a text dialog with draft-05 field names", () => {
@@ -78,6 +83,27 @@ describe("vconToCurt", () => {
     expect(curt.messages[1].role).toBe("assistant"); // message_id round-trips
     expect(curt.messages[1].id).toBe("assistant-msg-7");
     expect(curt.messages[2].role).toBe("user"); // party 1 named "user"
+  });
+
+  it("ignores party type for role recovery (it cannot distinguish system/tool)", () => {
+    const curt = vconToCurt({
+      uuid: "test-uuid",
+      created_at: "2026-01-01T00:00:00.000Z",
+      parties: [
+        { name: "Alice", type: "person" },
+        { name: "Support Bot", type: "bot" },
+      ],
+      dialog: [
+        {
+          type: "text",
+          start: "2026-01-01T00:01:00.000Z",
+          parties: [1],
+          body: "hi",
+          encoding: "none",
+        },
+      ],
+    })!;
+    expect(curt.messages[0].role).toBe("user"); // typed bot, but no curt role name
   });
 
   it("maps top-level vCon metadata into the conversation", () => {
