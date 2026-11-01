@@ -37,5 +37,13 @@
     "@types/node": "^24.19.2",
     "typescript": "^5.9.3",
     "vitest": "^2.1.9"
+  },
+  "repository": {
+    "url": "https://github.com/JordanNewell/curt-vcon.git",
+    "type": "git"
+  },
+  "homepage": "https://github.com/JordanNewell/curt-vcon#readme",
+  "bugs": {
+    "url": "https://github.com/JordanNewell/curt-vcon/issues"
   }
 }
